@@ -10,6 +10,7 @@ import { PostsService } from './posts.service';
 import { Post } from './entities/post.entity';
 import { CreatePostInput } from './dto/create-post.input';
 import { User } from './entities/user.entity';
+import { CurrentUser } from './current-user.decorator';
 
 @Resolver(() => Post)
 export class PostsResolver {
@@ -21,7 +22,9 @@ export class PostsResolver {
   }
 
   @Query(() => [Post], { name: 'posts' })
-  findAll() {
+  findAll(@CurrentUser() user: User) {
+    // getting user from custom decorator
+    console.log(user);
     return this.postsService.findAll();
   }
 
@@ -32,6 +35,6 @@ export class PostsResolver {
 
   @ResolveField(() => User)
   user(@Parent() post: Post): any {
-    return { __typename: 'User', id: post.authorId, name: 'John Doe' };
+    return { __typename: 'User', id: post.authorId };
   }
 }
